@@ -1,12 +1,26 @@
 import utils
+from telethon.types import User, Chat, Channel
 
-MESSAGE_DISPLAY_TIME = 30  # seconds
 
 dialogs_to_archive = dict()
 
 
-def filter(dialog):
-    if dialog.dialog.pinned:
+def should_archive(dialog):
+    config = utils.get_config()
+
+    if type(dialog.entity) is User and not config.archive.users:
+        return False
+
+    if type(dialog.entity) is Chat and not config.archive.chats:
+        return False
+
+    if type(dialog.entity) is Channel and not config.archive.channels:
+        return False
+
+    if type(dialog.entity) is User and dialog.entity.bot and not config.archive.bots:
+        return False
+
+    if dialog.dialog.pinned and not config.archive.pinned:
         return False
 
     if dialog.dialog.unread_mark:
@@ -35,27 +49,28 @@ def remove(dialog):
         del dialogs_to_archive[dialog.id]
 
 
-async def update():
+async def archive_dialogs():
     current_date = utils.get_current_date()
+    config = utils.get_config()
 
     ids_to_archive = []
     for dialog_id, values in dialogs_to_archive.items():
         date, _ = values
         duration = (current_date - date).total_seconds()
 
-        if duration >= MESSAGE_DISPLAY_TIME:
+        if duration >= config.archive.display_time:
             ids_to_archive.append(dialog_id)
 
-    for dialog_id in ids_to_archive:
-        _, dialog = dialogs_to_archive.pop(dialog_id)
+    for id in ids_to_archive:
+        _, dialog = dialogs_to_archive.pop(id)
         await dialog.archive()
 
 
-async def process(dialogs):
+async def handle(dialogs):
     for dialog in dialogs:
-        if filter(dialog):
+        if should_archive(dialog):
             add(dialog)
         else:
             remove(dialog)
 
-    await update()
+    await archive_dialogs()

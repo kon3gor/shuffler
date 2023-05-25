@@ -1,23 +1,27 @@
 from dataclasses import dataclass
 from typing import List
-from typing import Dict, Union
+from typing import Dict
 
 
 @dataclass
 class Archive:
     bots: bool
     users: bool
-    groups: bool
+    chats: bool
     pinned: bool
+    channels: bool
+    display_time: int
 
     @staticmethod
-    def from_dict(d: Union[Dict, None]) -> 'Archive':
-        bots = d.get("bots", None)
-        users = d.get("users", None)
-        groups = d.get("groups", None)
-        pinned = d.get("pinned", None)
+    def from_dict(d: Dict) -> 'Archive':
+        bots = d["bots"]
+        users = d["users"]
+        chats = d["chats"]
+        pinned = d["pinned"]
+        channels = d["channels"]
+        display_time = d["display_time"]
 
-        return Archive(bots, users, groups, pinned)
+        return Archive(bots, users, chats, pinned, channels, display_time)
 
 
 @dataclass
@@ -29,12 +33,12 @@ class Unread:
     ignore: List[str]
 
     @staticmethod
-    def from_dict(d: Union[Dict, None]) -> 'Unread':
-        folder_id = d.get("folder_id", None)
-        ignore_bots = d.get("ignore_bots", None)
-        const_chat = d.get("const_chat", None)
-        lifetime = d.get("lifetime", None)
-        ignore = d.get("ignore", None)
+    def from_dict(d: Dict) -> 'Unread':
+        folder_id = d["folder_id"]
+        ignore_bots = d["ignore_bots"]
+        const_chat = d["const_chat"]
+        lifetime = d["lifetime"]
+        ignore = d["ignore"]
 
         return Unread(folder_id, ignore_bots, const_chat, lifetime, ignore)
 
@@ -47,10 +51,10 @@ class Config:
     archive: Archive
 
     @staticmethod
-    def from_dict(d: Union[Dict, None]) -> 'Config':
-        api_id = d.get("api_id", None)
-        api_hash = d.get("api_hash", None)
-        unread = Unread.from_dict(d.get("unread", None))
-        archive = Archive.from_dict(d.get("archive", None))
+    def from_dict(d: Dict) -> 'Config':
+        api_id = d["api_id"]
+        api_hash = d["api_hash"]
+        unread = Unread.from_dict(d["unread"])
+        archive = Archive.from_dict(d["archive"])
 
         return Config(api_id, api_hash, unread, archive)

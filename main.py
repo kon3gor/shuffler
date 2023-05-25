@@ -1,26 +1,19 @@
-import os
-import asyncio
-import json
-import toml
-import dotenv
-from telethon import sync
-import telethon.tl.functions.messages as functions
-from telethon.tl.types import DialogFilter, DialogFilterDefault
-import unread
 import utils
+import asyncio
+from telethon import sync
+import unread
+import archive
 
-dotenv.load_dotenv()
-API_ID = os.getenv("API_ID")
-API_HASH = os.getenv("API_HASH")
-ONE_TO_ONE_FOLDER = 118
 SLEEP = 5
 
 
 async def main():
-    async with sync.TelegramClient("session", API_ID, API_HASH) as client:
+    config = utils.get_config()
+    async with sync.TelegramClient("session", config.api_id, config.api_hash) as client:
         while True:
             dialogs = await client.get_dialogs(archived=False)
             await unread.handle(client, dialogs)
+            await archive.handle(dialogs)
             await asyncio.sleep(SLEEP)
 
 
