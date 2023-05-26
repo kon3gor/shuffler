@@ -3,3 +3,4 @@ pyasn1==0.5.0
 python-dotenv==1.0.0
 rsa==4.9
 Telethon==1.28.5
+toml==0.10.2
