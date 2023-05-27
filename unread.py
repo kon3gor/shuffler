@@ -44,18 +44,14 @@ def add(dialog: Dialog):
     if dialog.id in dialogs_to_move:
         return
 
-    dialogs_to_move[dialog.id] = utils.get_current_date()
+    dialogs_to_move.add(dialog.id)
 
 
 def remove(dialog: Dialog):
     if dialog.id not in dialogs_to_move.keys():
         return
 
-    config = utils.get_config()
-    now = utils.get_current_date()
-    delta = (now - dialogs_to_move[dialog.id]).total_seconds()
-    if delta > config.unread.lifetime:
-        del dialogs_to_move[dialog.id]
+    dialogs_to_move.remove(dialog.id)
 
 
 async def get_folder(client: sync.TelegramClient, folder_id: int) -> DialogFilter:
@@ -74,7 +70,7 @@ async def move_dialogs(client: sync.TelegramClient):
     config = utils.get_config()
     include_peers = []
     folder = await get_folder(client, config.unread.folder_id)
-    for id in dialogs_to_move.keys():
+    for id in dialogs_to_move:
         dialog = await client.get_input_entity(id)
         include_peers.append(dialog)
 
