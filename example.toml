@@ -1,0 +1,18 @@
+api_id = ""
+api_hash = ""
+
+[unread]
+folder_id = -1 
+ignore_bots = true
+const_chat = "" # Need some chat in folder otherwise it will be deleted
+lifetime = 30 # time in seconds
+ignore = [ # Persons who should not be added to this folder
+	
+]
+
+[archive]
+bots = true
+users = true
+chats = true
+pinned = false
+channels = true
