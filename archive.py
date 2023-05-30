@@ -5,6 +5,16 @@ from telethon.types import User, Chat, Channel
 dialogs_to_archive = dict()
 
 
+def dialog_has_unread(dialog) -> bool:
+    unread_mark = dialog.unread_mark
+    unread_count = dialog.unread_count
+    unread_mentions_count = dialog.unread_mentions_count
+    unread_reactions_count = dialog.unread_reactions_count
+    # Somehow group chats with topics has bajillion number of unread.
+    # Use unread_mark as main criteria to overcome this issue
+    return unread_mark and (unread_count > 0 or unread_mentions_count > 0 or unread_reactions_count > 0)
+
+
 def should_archive(dialog):
     config = utils.get_config()
 
@@ -23,16 +33,7 @@ def should_archive(dialog):
     if dialog.dialog.pinned and not config.archive.pinned:
         return False
 
-    if dialog.dialog.unread_mark:
-        return False
-
-    if dialog.dialog.unread_count > 0:
-        return False
-
-    if dialog.dialog.unread_mentions_count > 0:
-        return False
-
-    if dialog.dialog.unread_reactions_count > 0:
+    if dialog_has_unread(dialog.dialog):
         return False
 
     return True

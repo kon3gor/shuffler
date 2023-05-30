@@ -5,7 +5,7 @@ from telethon import sync
 from telethon.functions import messages
 import telegram
 
-dialogs_to_move = {}
+dialogs_to_move = set()
 
 
 def should_move(dialog: Dialog):
@@ -48,7 +48,7 @@ def add(dialog: Dialog):
 
 
 def remove(dialog: Dialog):
-    if dialog.id not in dialogs_to_move.keys():
+    if dialog.id not in dialogs_to_move:
         return
 
     dialogs_to_move.remove(dialog.id)
