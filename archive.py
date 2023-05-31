@@ -12,7 +12,9 @@ def dialog_has_unread(dialog) -> bool:
     unread_reactions_count = dialog.unread_reactions_count
     # Somehow group chats with topics has bajillion number of unread.
     # Use unread_mark as main criteria to overcome this issue
-    return unread_mark and (unread_count > 0 or unread_mentions_count > 0 or unread_reactions_count > 0)
+    # Idk why but this archives everything
+    # return unread_mark and (unread_count > 0 or unread_mentions_count > 0 or unread_reactions_count > 0)
+    return unread_mark or unread_count > 0 or unread_mentions_count > 0 or unread_reactions_count > 0
 
 
 def should_archive(dialog):
